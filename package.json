@@ -1,0 +1,27 @@
+{
+  "name": "reflow-rejector",
+  "version": "1.0.0",
+  "description": "Library intended to be used with development mode only.  Will console.error or alert if too many reflows are detected",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:build": "rollup demo/demo-app.js --file demo/bundle.js --format umd -w",
+    "dev:server": "http-server ./demo",
+    "dev": "npm-run-all -l -p dev:build dev:server",
+    "build": "rollup src/index.js --file dist/bundle.js --format umd"
+  },
+  "keywords": [
+    "reflow",
+    "javascript",
+    "es6"
+  ],
+  "author": "Eric Tsai",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^0.9.0",
+    "rollup": "^1.15.4"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
