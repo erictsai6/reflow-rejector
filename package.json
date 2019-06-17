@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev:build": "rollup demo/demo-app.js --file demo/bundle.js --format umd -w",
+    "dev:build": "rollup -c ./rollup.config.dev.js -w",
     "dev:server": "http-server ./demo",
     "dev": "npm-run-all -l -p dev:build dev:server",
-    "build": "rollup src/index.js --file dist/bundle.js --format umd"
+    "build": "rollup -c"
   },
   "keywords": [
     "reflow",
@@ -22,6 +22,9 @@
     "rollup": "^1.15.4"
   },
   "devDependencies": {
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "rollup-plugin-typescript": "^1.0.1",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.2"
   }
 }

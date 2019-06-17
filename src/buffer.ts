@@ -29,7 +29,7 @@ export class Buffer {
         this.alertType = alertType;
     }
 
-    addEvent(event) {
+    addEvent(event: IEvent) {
         this.eventsQueue.push(event);
     }
 
