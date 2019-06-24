@@ -1,8 +1,18 @@
-import { elementWrapper } from './element.ts';
+import { elementWrapper } from './element';
+import { EventsQueue } from './events-queue';
+import { IConfig } from './events-queue';
 
-const originalCreateElement = document.createElement;
-document.createElement = (arg, ...otherArgs) => {
-    const element = originalCreateElement(arg, ...otherArgs);
-    elementWrapper(element);
-    return element;
+export class ReflowRejector {
+    public static initialize(config?: IConfig) {
+        const buffer = EventsQueue.getInstance();
+        buffer.setConfig(config);
+
+        elementWrapper();
+        buffer.startInterval();
+    }
+
+    public static teardown() {
+        const buffer = EventsQueue.getInstance();
+        buffer.stopInterval();
+    }
 }

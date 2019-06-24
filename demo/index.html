@@ -2,10 +2,27 @@
     <head>
         <title>Reflow Rejector Demo Application</title>
         <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        <style>
+            .description {
+                padding: 10px 0px;
+            }
+        </style>
     </head>
     <body>
-        <h1>Reflow Rejector Demo Application</h1>
-        <div id="app"></div>
+        <div class="container">
+            <h1>Reflow Rejector Demo Application</h1>
+            <div class="description">
+                <div>
+                    This demo is a small example where we are loading in the 
+                    ReflowRejector class and initializing it with our own optional configuration.
+                    It will then create a set of X divs and anchor tags and on an interval 
+                    change the left margin of the parent container.  With each interval we will
+                    also calculate the offsetLeft of the anchor element and validate 
+                    that the alert dialog is triggered as expected
+                </div>
+            </div>
+            <div id="app"></div>
+        </div>
         <script src="/bundle.js"></script>
     </body>
 </html>

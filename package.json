@@ -4,7 +4,8 @@
   "description": "Library intended to be used with development mode only.  Will console.error or alert if too many reflows are detected",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "karma start",
+    "test:watch": "karma start --no-single-run",
     "dev:build": "rollup -c ./rollup.config.dev.js -w",
     "dev:server": "http-server ./demo",
     "dev": "npm-run-all -l -p dev:build dev:server",
@@ -22,6 +23,14 @@
     "rollup": "^1.15.4"
   },
   "devDependencies": {
+    "@types/jasmine": "^3.3.13",
+    "jasmine-core": "^3.4.0",
+    "karma": "^4.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-jasmine": "^2.0.1",
+    "karma-typescript": "^4.1.0",
+    "karma-typescript-es6-transform": "^4.1.0",
     "npm-run-all": "^4.1.5",
     "rollup-plugin-typescript": "^1.0.1",
     "tslib": "^1.10.0",
