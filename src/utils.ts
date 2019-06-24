@@ -7,9 +7,3 @@
 export function getRenamedProperty(originalProperty: string) {
     return `_original_${originalProperty}_`;
 }
-
-export function renamePropertyOnElement(entity: any, originalProperty: string) {
-    const renamedProperty = getRenamedProperty(originalProperty);
-    entity[renamedProperty] = entity[originalProperty];
-    return renamedProperty;
-}

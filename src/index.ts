@@ -1,4 +1,4 @@
-import { elementWrapper } from './element';
+import { elementWrapper, undoElementWrapper } from './element';
 import { EventsQueue } from './events-queue';
 import { IConfig } from './events-queue';
 
@@ -13,6 +13,8 @@ export class ReflowRejector {
 
     public static teardown() {
         const buffer = EventsQueue.getInstance();
+
+        undoElementWrapper();
         buffer.stopInterval();
     }
 }
