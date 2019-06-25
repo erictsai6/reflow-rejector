@@ -6,7 +6,8 @@ interface IEvent {
 export interface IConfig {
     maxAllowed?: number;
     intervalMs?: number;
-    alertType?: EAlertType
+    alertType?: EAlertType;
+    alertFrequencyMs?: number;
 }
 
 export enum EAlertType {
@@ -17,10 +18,12 @@ export enum EAlertType {
 const DEFAULT_MAX_ALLOWED = 10;
 const DEFAULT_INTERVAL_MS = 1500;
 const DEFAULT_ALERT_TYPE = EAlertType.ALERT;
+const DEFAULT_ALERT_FREQUENCY_MS = 10 * 60000; // 10 Minutes
 const DEFAULT_CONFIG: IConfig = {
     maxAllowed: DEFAULT_MAX_ALLOWED,
     intervalMs: DEFAULT_INTERVAL_MS,
-    alertType: DEFAULT_ALERT_TYPE
+    alertType: DEFAULT_ALERT_TYPE,
+    alertFrequencyMs: DEFAULT_ALERT_FREQUENCY_MS
 }
 
 export class EventsQueue {
@@ -29,7 +32,9 @@ export class EventsQueue {
     private maxAllowed: number = DEFAULT_MAX_ALLOWED;
     private intervalMs: number = DEFAULT_INTERVAL_MS;
     private alertType: EAlertType = EAlertType.ALERT;    
+    private alertFrequencyMs: number = DEFAULT_ALERT_FREQUENCY_MS;
 
+    private lastAlertedTime: Date | null = null;
     private static _instance_: EventsQueue;
 
     public static getInstance() {
@@ -61,8 +66,13 @@ export class EventsQueue {
     }
 
     public startInterval() {
+        if (this.interval) {
+            window.console.warn('Events queue interval already started, ignoring..');
+            return;
+        }
+        this.lastAlertedTime = null;
         this.interval = setInterval(() => {
-            if (this.queue.length > this.maxAllowed) {
+            if (this.shouldAlert()) {
                 this.alertDeveloper();
             }
 
@@ -73,13 +83,21 @@ export class EventsQueue {
 
     public stopInterval() {
         clearInterval(this.interval);
+        this.interval = null;
     }
     
+    private shouldAlert() {
+        return this.queue.length > this.maxAllowed &&
+            (!this.lastAlertedTime || 
+                new Date(this.lastAlertedTime.getTime() + this.alertFrequencyMs) < new Date());
+    }
+
     private alertDeveloper() {
         if (this.alertType === EAlertType.ALERT) {
             window.alert(this.generateAlertMessage());
         }
         window.console.error(this.queue.slice());
+        this.lastAlertedTime = new Date();
     }
 
     private generateAlertMessage() {

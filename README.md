@@ -14,7 +14,8 @@ import { ReflowRejector } from 'reflow-rejector';
 const config = {
     maxAllowed: 10, // default 10
     intervalMs: 1500, // default 1500
-    alertType: 'ALERT' // default 'ALERT' - ['ALERT', 'CONSOLE']
+    alertType: 'ALERT', // default 'ALERT' - ['ALERT', 'CONSOLE']
+    alertFrequencyMs: 600000 // default 10 minutes == 600,000 ms
 };
 
 ReflowRejector.initialize(config);

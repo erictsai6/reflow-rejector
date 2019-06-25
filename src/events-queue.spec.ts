@@ -53,7 +53,7 @@ describe('EventsQueue <Unit Test>', () => {
                 });
             }
             eventsQueue.startInterval();
-            await pause(60);
+            await pause(15);
             
             let args = alertSpy.calls.first().args;
             expect(args[0]).toContain(`${TEST_MAX_ALLOWED + 1} event(s) within 10 ms`);
@@ -71,7 +71,7 @@ describe('EventsQueue <Unit Test>', () => {
                 });
             }
             eventsQueue.startInterval();
-            await pause(60);
+            await pause(15);
             
             expect(alertSpy).not.toHaveBeenCalled();
         });
@@ -90,7 +90,7 @@ describe('EventsQueue <Unit Test>', () => {
                 });
             }
             eventsQueue.startInterval();
-            await pause(60);
+            await pause(15);
             
             expect(alertSpy).not.toHaveBeenCalled();
             let args = consoleSpy.calls.first().args;

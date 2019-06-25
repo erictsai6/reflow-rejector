@@ -37,10 +37,12 @@
     var DEFAULT_MAX_ALLOWED = 10;
     var DEFAULT_INTERVAL_MS = 1500;
     var DEFAULT_ALERT_TYPE = EAlertType.ALERT;
+    var DEFAULT_ALERT_FREQUENCY_MS = 10 * 60000; // 10 Minutes
     var DEFAULT_CONFIG = {
         maxAllowed: DEFAULT_MAX_ALLOWED,
         intervalMs: DEFAULT_INTERVAL_MS,
-        alertType: DEFAULT_ALERT_TYPE
+        alertType: DEFAULT_ALERT_TYPE,
+        alertFrequencyMs: DEFAULT_ALERT_FREQUENCY_MS
     };
     var EventsQueue = /** @class */ (function () {
         function EventsQueue(config) {
@@ -48,6 +50,8 @@
             this.maxAllowed = DEFAULT_MAX_ALLOWED;
             this.intervalMs = DEFAULT_INTERVAL_MS;
             this.alertType = EAlertType.ALERT;
+            this.alertFrequencyMs = DEFAULT_ALERT_FREQUENCY_MS;
+            this.lastAlertedTime = null;
             this.setConfig(config);
         }
         EventsQueue.getInstance = function () {
@@ -71,7 +75,7 @@
         EventsQueue.prototype.startInterval = function () {
             var _this = this;
             this.interval = setInterval(function () {
-                if (_this.queue.length > _this.maxAllowed) {
+                if (_this.shouldAlert()) {
                     _this.alertDeveloper();
                 }
                 // Reset the events queue
@@ -81,11 +85,17 @@
         EventsQueue.prototype.stopInterval = function () {
             clearInterval(this.interval);
         };
+        EventsQueue.prototype.shouldAlert = function () {
+            return this.queue.length > this.maxAllowed &&
+                (!this.lastAlertedTime ||
+                    new Date(this.lastAlertedTime.getTime() + this.alertFrequencyMs) < new Date());
+        };
         EventsQueue.prototype.alertDeveloper = function () {
             if (this.alertType === EAlertType.ALERT) {
                 window.alert(this.generateAlertMessage());
             }
             window.console.error(this.queue.slice());
+            this.lastAlertedTime = new Date();
         };
         EventsQueue.prototype.generateAlertMessage = function () {
             return "Reflow detector triggered\n\n\n            Saw " + this.queue.length + " event(s) within " + this.intervalMs + " ms.\n \n            Please see console for more details.";
@@ -226,7 +236,7 @@
                 type: method,
                 stacktrace: stacktrace
             });
-            return objectPrototype[renamedMethod].apply(objectPrototype, args);
+            return objectPrototype[renamedMethod].apply(this, args);
         };
     }
     function undoDefineObjectProperty(objectPrototype, property) {

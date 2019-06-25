@@ -1,6 +1,6 @@
 {
   "name": "reflow-rejector",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Library intended to be used with development mode only.  Will console.error or alert if too many reflows are detected",
   "main": "dist/bundle.js",
   "module": "dist/bundle.es.js",
