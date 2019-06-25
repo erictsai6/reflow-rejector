@@ -118,7 +118,7 @@ function defineObjectMethod(objectPrototype: any, method: string) {
             type: method,
             stacktrace
         });
-        return objectPrototype[renamedMethod](...args);
+        return objectPrototype[renamedMethod].apply(this, args);
     }
 }
 
