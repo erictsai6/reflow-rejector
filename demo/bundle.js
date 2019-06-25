@@ -35,58 +35,62 @@
         EAlertType["CONSOLE"] = "CONSOLE";
     })(EAlertType || (EAlertType = {}));
     var DEFAULT_MAX_ALLOWED = 10;
-    var DEFAULT_BUFFER_MS = 1500;
+    var DEFAULT_INTERVAL_MS = 1500;
     var DEFAULT_ALERT_TYPE = EAlertType.ALERT;
     var DEFAULT_CONFIG = {
         maxAllowed: DEFAULT_MAX_ALLOWED,
-        bufferMs: DEFAULT_BUFFER_MS,
+        intervalMs: DEFAULT_INTERVAL_MS,
         alertType: DEFAULT_ALERT_TYPE
     };
-    var Buffer = /** @class */ (function () {
-        function Buffer(config) {
+    var EventsQueue = /** @class */ (function () {
+        function EventsQueue(config) {
+            this.queue = [];
+            this.maxAllowed = DEFAULT_MAX_ALLOWED;
+            this.intervalMs = DEFAULT_INTERVAL_MS;
+            this.alertType = EAlertType.ALERT;
             this.setConfig(config);
         }
-        Buffer.getInstance = function () {
-            if (!Buffer._instance_) {
-                Buffer._instance_ = new Buffer();
+        EventsQueue.getInstance = function () {
+            if (!EventsQueue._instance_) {
+                EventsQueue._instance_ = new EventsQueue();
             }
-            return Buffer._instance_;
+            return EventsQueue._instance_;
         };
-        Buffer.prototype.setConfig = function (config) {
+        EventsQueue.prototype.setConfig = function (config) {
             config = config || {};
             var mergedConfig = __assign({}, DEFAULT_CONFIG, config);
             this.interval = null;
-            this.eventsQueue = [];
+            this.queue = [];
             this.maxAllowed = mergedConfig.maxAllowed;
-            this.bufferMs = mergedConfig.bufferMs;
+            this.intervalMs = mergedConfig.intervalMs;
             this.alertType = mergedConfig.alertType;
         };
-        Buffer.prototype.addEvent = function (event) {
-            this.eventsQueue.push(event);
+        EventsQueue.prototype.addEvent = function (event) {
+            this.queue.push(event);
         };
-        Buffer.prototype.startInterval = function () {
+        EventsQueue.prototype.startInterval = function () {
             var _this = this;
             this.interval = setInterval(function () {
-                if (_this.eventsQueue.length > _this.maxAllowed) {
+                if (_this.queue.length > _this.maxAllowed) {
                     _this.alertDeveloper();
                 }
                 // Reset the events queue
-                _this.eventsQueue.length = 0;
-            }, this.bufferMs);
+                _this.queue.length = 0;
+            }, this.intervalMs);
         };
-        Buffer.prototype.stopInterval = function () {
+        EventsQueue.prototype.stopInterval = function () {
             clearInterval(this.interval);
         };
-        Buffer.prototype.alertDeveloper = function () {
+        EventsQueue.prototype.alertDeveloper = function () {
             if (this.alertType === EAlertType.ALERT) {
-                alert(this.generateAlertMessage());
+                window.alert(this.generateAlertMessage());
             }
-            console.error(this.eventsQueue);
+            window.console.error(this.queue.slice());
         };
-        Buffer.prototype.generateAlertMessage = function () {
-            return "Reflow detector triggered\n\n\n            Saw " + this.eventsQueue.length + " event(s) within " + this.bufferMs + " ms.\n \n            Please see console for more details.";
+        EventsQueue.prototype.generateAlertMessage = function () {
+            return "Reflow detector triggered\n\n\n            Saw " + this.queue.length + " event(s) within " + this.intervalMs + " ms.\n \n            Please see console for more details.";
         };
-        return Buffer;
+        return EventsQueue;
     }());
 
     /**
@@ -99,38 +103,101 @@
         return "_original_" + originalProperty + "_";
     }
 
-    var buffer = Buffer.getInstance();
+    var buffer = EventsQueue.getInstance();
     // Reference link: https://gist.github.com/paulirish/5d52fb081b3570c81e3a
-    var ELEMENT_PROPERTIES = [
+    var HTMLELEMENT_PROPERTIES = [
         // Box metrics
         'offsetLeft',
         'offsetTop',
         'offsetWidth',
         'offsetHeight',
-        'offsetParent',
-        'getClientRects',
-        'getBoundingClientRect',
-        // Scroll - need to differentiate setters
+        'offsetParent'
+    ];
+    var ELEMENT_PROPERTIES = [
         'scrollWidth',
         'scrollHeight',
         'scrollLeft',
         'scrollTop'
     ];
+    var ELEMENT_METHODS = [
+        'getClientRects',
+        'getBoundingClientRect',
+        'scrollBy',
+        'scrollTo',
+        'scrollIntoView',
+        'scrollIntoViewIfNeeded'
+    ];
+    var WINDOW_PROPERTIES = [
+        'scrollX',
+        'scrollY',
+        'innerHeight',
+        'innerWidth'
+    ];
+    var WINDOW_METHODS = [
+    // 'getComputedStyle',
+    // 'getMatchedCSSRules'
+    ];
     function elementWrapper() {
-        for (var _i = 0, ELEMENT_PROPERTIES_1 = ELEMENT_PROPERTIES; _i < ELEMENT_PROPERTIES_1.length; _i++) {
-            var property = ELEMENT_PROPERTIES_1[_i];
-            defineElementProperty(property);
+        for (var _i = 0, HTMLELEMENT_PROPERTIES_1 = HTMLELEMENT_PROPERTIES; _i < HTMLELEMENT_PROPERTIES_1.length; _i++) {
+            var property = HTMLELEMENT_PROPERTIES_1[_i];
+            defineObjectProperty(HTMLElement.prototype, property);
+        }
+        for (var _a = 0, ELEMENT_PROPERTIES_1 = ELEMENT_PROPERTIES; _a < ELEMENT_PROPERTIES_1.length; _a++) {
+            var property = ELEMENT_PROPERTIES_1[_a];
+            defineObjectProperty(Element.prototype, property);
+        }
+        for (var _b = 0, ELEMENT_METHODS_1 = ELEMENT_METHODS; _b < ELEMENT_METHODS_1.length; _b++) {
+            var method = ELEMENT_METHODS_1[_b];
+            defineObjectMethod(Element.prototype, method);
+        }
+        for (var _c = 0, WINDOW_PROPERTIES_1 = WINDOW_PROPERTIES; _c < WINDOW_PROPERTIES_1.length; _c++) {
+            var property = WINDOW_PROPERTIES_1[_c];
+            defineObjectProperty(window, property);
+        }
+        for (var _d = 0, WINDOW_METHODS_1 = WINDOW_METHODS; _d < WINDOW_METHODS_1.length; _d++) {
+            var method = WINDOW_METHODS_1[_d];
+            defineObjectMethod(window, method);
         }
     }
-    function defineElementProperty(property) {
+    function undoElementWrapper() {
+        for (var _i = 0, HTMLELEMENT_PROPERTIES_2 = HTMLELEMENT_PROPERTIES; _i < HTMLELEMENT_PROPERTIES_2.length; _i++) {
+            var property = HTMLELEMENT_PROPERTIES_2[_i];
+            undoDefineObjectProperty(HTMLElement.prototype, property);
+        }
+        for (var _a = 0, ELEMENT_PROPERTIES_2 = ELEMENT_PROPERTIES; _a < ELEMENT_PROPERTIES_2.length; _a++) {
+            var property = ELEMENT_PROPERTIES_2[_a];
+            undoDefineObjectProperty(Element.prototype, property);
+        }
+        for (var _b = 0, ELEMENT_METHODS_2 = ELEMENT_METHODS; _b < ELEMENT_METHODS_2.length; _b++) {
+            var method = ELEMENT_METHODS_2[_b];
+            undoDefineObjectMethod(Element.prototype, method);
+        }
+        for (var _c = 0, WINDOW_PROPERTIES_2 = WINDOW_PROPERTIES; _c < WINDOW_PROPERTIES_2.length; _c++) {
+            var property = WINDOW_PROPERTIES_2[_c];
+            undoDefineObjectProperty(window, property);
+        }
+        for (var _d = 0, WINDOW_METHODS_2 = WINDOW_METHODS; _d < WINDOW_METHODS_2.length; _d++) {
+            var method = WINDOW_METHODS_2[_d];
+            undoDefineObjectMethod(window, method);
+        }
+    }
+    function defineObjectProperty(objectPrototype, property) {
         var renamedPropertyName = getRenamedProperty(property);
-        var originalImplementation = Object.getOwnPropertyDescriptor(HTMLElement.prototype, property);
+        var originalImplementation = Object.getOwnPropertyDescriptor(objectPrototype, property);
         if (!originalImplementation) {
-            console.warn("Invalid element property passed in: " + property + " - could be a browser thing.");
+            console.warn("Invalid " + objectPrototype.toString() + " property passed in: " + property + " - could be a browser thing.");
             return;
         }
-        Object.defineProperty(HTMLElement.prototype, renamedPropertyName, originalImplementation);
-        Object.defineProperty(HTMLElement.prototype, property, {
+        Object.defineProperty(objectPrototype, renamedPropertyName, originalImplementation);
+        Object.defineProperty(objectPrototype, property, {
+            set: function (value) {
+                var stacktrace = (new Error()).stack;
+                buffer.addEvent({
+                    type: property,
+                    stacktrace: stacktrace
+                });
+                return this[renamedPropertyName] = value;
+            },
             get: function () {
                 var stacktrace = (new Error()).stack;
                 buffer.addEvent({
@@ -141,19 +208,68 @@
             }
         });
     }
+    function defineObjectMethod(objectPrototype, method) {
+        var renamedMethod = getRenamedProperty(method);
+        var originalImplementation = objectPrototype[method];
+        if (!originalImplementation) {
+            console.warn("Invalid " + objectPrototype.toString() + " method passed in: " + method + " - could be a browser thing.");
+            return;
+        }
+        objectPrototype[renamedMethod] = originalImplementation;
+        objectPrototype[method] = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var stacktrace = (new Error()).stack;
+            buffer.addEvent({
+                type: method,
+                stacktrace: stacktrace
+            });
+            return objectPrototype[renamedMethod].apply(objectPrototype, args);
+        };
+    }
+    function undoDefineObjectProperty(objectPrototype, property) {
+        var renamedPropertyName = getRenamedProperty(property);
+        var originalImplementation = Object.getOwnPropertyDescriptor(objectPrototype, renamedPropertyName);
+        if (!originalImplementation) {
+            console.warn("Invalid " + objectPrototype.toString() + " property passed in: " + property + ", could not UNDO it - could be a browser thing.");
+            return;
+        }
+        Object.defineProperty(objectPrototype, property, originalImplementation);
+        delete objectPrototype[renamedPropertyName];
+    }
+    function undoDefineObjectMethod(objectPrototype, method) {
+        var renamedMethod = getRenamedProperty(method);
+        var originalImplementation = objectPrototype[renamedMethod];
+        if (!originalImplementation) {
+            console.warn("Invalid " + objectPrototype.toString() + " method passed in: " + method + ", could not UNDO it - could be a browser thing.");
+            return;
+        }
+        objectPrototype[method] = originalImplementation;
+        delete objectPrototype[renamedMethod];
+    }
 
+    var initialized = false;
     var ReflowRejector = /** @class */ (function () {
         function ReflowRejector() {
         }
         ReflowRejector.initialize = function (config) {
-            var buffer = Buffer.getInstance();
+            if (initialized) {
+                window.console.warn('ReflowRejector has already been initialized, ignoring..');
+                return;
+            }
+            var buffer = EventsQueue.getInstance();
             buffer.setConfig(config);
             elementWrapper();
             buffer.startInterval();
+            initialized = true;
         };
         ReflowRejector.teardown = function () {
-            var buffer = Buffer.getInstance();
+            var buffer = EventsQueue.getInstance();
+            undoElementWrapper();
             buffer.stopInterval();
+            initialized = false;
         };
         return ReflowRejector;
     }());

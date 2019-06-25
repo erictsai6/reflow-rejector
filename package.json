@@ -2,14 +2,17 @@
   "name": "reflow-rejector",
   "version": "1.0.0",
   "description": "Library intended to be used with development mode only.  Will console.error or alert if too many reflows are detected",
-  "main": "index.js",
+  "main": "dist/bundle.js",
+  "module": "dist/bundle.es.js",
+  "types": "dist/bundle.d.ts",
+  "files": ["dist"],
   "scripts": {
     "test": "karma start",
     "test:watch": "karma start --no-single-run",
     "dev:build": "rollup -c ./rollup.config.dev.js -w",
     "dev:server": "http-server ./demo",
     "dev": "npm-run-all -l -p dev:build dev:server",
-    "build": "rollup -c"
+    "build": "rollup -c ./rollup.config.js"
   },
   "keywords": [
     "reflow",
