@@ -59,6 +59,7 @@ export class EventsQueue {
         this.maxAllowed = <number>mergedConfig.maxAllowed;
         this.intervalMs = <number>mergedConfig.intervalMs;
         this.alertType = <EAlertType>mergedConfig.alertType;
+        this.alertFrequencyMs = <number>mergedConfig.alertFrequencyMs;
     }
 
     public addEvent(event: IEvent) {
@@ -87,6 +88,7 @@ export class EventsQueue {
     }
     
     private shouldAlert() {
+        // debugger;
         return this.queue.length > this.maxAllowed &&
             (!this.lastAlertedTime || 
                 new Date(this.lastAlertedTime.getTime() + this.alertFrequencyMs) < new Date());

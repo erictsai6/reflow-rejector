@@ -97,6 +97,45 @@ describe('EventsQueue <Unit Test>', () => {
             expect(args[0].length).toBe(TEST_MAX_ALLOWED + 1);
             expect(args[0][0].type).toBe('offsetLeft');
         });
+
+        it('should only trigger once every alertFrequencyMs to avoid pestering the dev unless they want it', async () => {
+            eventsQueue.setConfig({
+                maxAllowed: TEST_MAX_ALLOWED,
+                intervalMs: 10,
+                alertType: EAlertType.ALERT,
+                alertFrequencyMs: 50
+            });
+
+            const addExceedingEvents = () => {
+                for (let i = 0; i < TEST_MAX_ALLOWED + 1; i++) {
+                    eventsQueue.addEvent({
+                        type: 'offsetLeft', 
+                        stacktrace: {}
+                    });
+                }
+            }
+            addExceedingEvents();
+            eventsQueue.startInterval();   
+            
+            // --- Should only alert once every 50 ms         
+
+            // 20 ms mark - should have alerted
+            await pause(11);                    
+            expect(alertSpy).toHaveBeenCalledTimes(1);
+            await pause(9);
+                        
+            // 40 ms mark - should not have alerted (assert its just been alerted once)
+            addExceedingEvents();
+            await pause(11);
+            expect(alertSpy).toHaveBeenCalledTimes(1);
+            await pause(9);
+
+            // 80 ms mark - should alert again (assert that it alerts twice)
+            await pause(40);
+            addExceedingEvents();
+            await pause(11);
+            expect(alertSpy).toHaveBeenCalledTimes(2);
+        }); 
     });
 
     describe('#stopInterval', () => {
