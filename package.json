@@ -16,6 +16,10 @@
     "dev": "npm-run-all -l -p dev:build dev:server",
     "build": "rollup -c ./rollup.config.js"
   },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/erictsai6/reflow-rejector.git"
+  },
   "keywords": [
     "reflow",
     "javascript",

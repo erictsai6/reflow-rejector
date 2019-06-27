@@ -3,6 +3,9 @@ Small library to alert if any reflow abuses are detected
 
 The purpose of this library is to monitor the runtime usage of javascript APIs that are known to trigger reflows. [Reference link](https://gist.github.com/paulirish/5d52fb081b3570c81e3a)
 
+## Demo
+![Demo Gif](readme_imgs/demo-reflow-rejector.gif)
+
 ## Installation
 `npm install reflow-rejector`
 

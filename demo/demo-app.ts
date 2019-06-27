@@ -23,4 +23,4 @@ setInterval(() => {
         div.style.marginLeft = Math.random() * 100 + 'px';
         div.children[1].innerText = `${div.children[0].offsetLeft} px offsetLeft`;
     }
-}, 5000)
+}, 10000)

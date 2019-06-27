@@ -68,12 +68,18 @@
             this.maxAllowed = mergedConfig.maxAllowed;
             this.intervalMs = mergedConfig.intervalMs;
             this.alertType = mergedConfig.alertType;
+            this.alertFrequencyMs = mergedConfig.alertFrequencyMs;
         };
         EventsQueue.prototype.addEvent = function (event) {
             this.queue.push(event);
         };
         EventsQueue.prototype.startInterval = function () {
             var _this = this;
+            if (this.interval) {
+                window.console.warn('Events queue interval already started, ignoring..');
+                return;
+            }
+            this.lastAlertedTime = null;
             this.interval = setInterval(function () {
                 if (_this.shouldAlert()) {
                     _this.alertDeveloper();
@@ -84,8 +90,10 @@
         };
         EventsQueue.prototype.stopInterval = function () {
             clearInterval(this.interval);
+            this.interval = null;
         };
         EventsQueue.prototype.shouldAlert = function () {
+            // debugger;
             return this.queue.length > this.maxAllowed &&
                 (!this.lastAlertedTime ||
                     new Date(this.lastAlertedTime.getTime() + this.alertFrequencyMs) < new Date());
@@ -102,6 +110,7 @@
         };
         return EventsQueue;
     }());
+    //# sourceMappingURL=events-queue.js.map
 
     /**
      *
@@ -112,6 +121,7 @@
     function getRenamedProperty(originalProperty) {
         return "_original_" + originalProperty + "_";
     }
+    //# sourceMappingURL=utils.js.map
 
     var buffer = EventsQueue.getInstance();
     // Reference link: https://gist.github.com/paulirish/5d52fb081b3570c81e3a
@@ -259,6 +269,7 @@
         objectPrototype[method] = originalImplementation;
         delete objectPrototype[renamedMethod];
     }
+    //# sourceMappingURL=element.js.map
 
     var initialized = false;
     var ReflowRejector = /** @class */ (function () {
@@ -283,6 +294,7 @@
         };
         return ReflowRejector;
     }());
+    //# sourceMappingURL=index.js.map
 
     ReflowRejector.initialize();
     var appContainer = document.getElementById('app');
@@ -304,6 +316,6 @@
             div.style.marginLeft = Math.random() * 100 + 'px';
             div.children[1].innerText = div.children[0].offsetLeft + " px offsetLeft";
         }
-    }, 5000);
+    }, 10000);
 
 }));
