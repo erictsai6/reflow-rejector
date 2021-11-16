@@ -1,7 +1,7 @@
 import { EventsQueue, EAlertType } from './events-queue';
 
 const pause = function(pausedMs: number) {
-    const promise = new Promise((resolve) => {
+    const promise = new Promise<void>((resolve) => {
         setTimeout(() => {
             resolve();
         }, pausedMs)
