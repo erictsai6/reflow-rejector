@@ -1,21 +1,21 @@
 (function (factory) {
     typeof define === 'function' && define.amd ? define(factory) :
     factory();
-}(function () { 'use strict';
+})((function () { 'use strict';
 
     /*! *****************************************************************************
-    Copyright (c) Microsoft Corporation. All rights reserved.
-    Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-    this file except in compliance with the License. You may obtain a copy of the
-    License at http://www.apache.org/licenses/LICENSE-2.0
+    Copyright (c) Microsoft Corporation.
 
-    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-    WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-    MERCHANTABLITY OR NON-INFRINGEMENT.
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
 
-    See the Apache Version 2.0 License for specific language governing permissions
-    and limitations under the License.
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
 
     var __assign = function() {
@@ -62,7 +62,7 @@
         };
         EventsQueue.prototype.setConfig = function (config) {
             config = config || {};
-            var mergedConfig = __assign({}, DEFAULT_CONFIG, config);
+            var mergedConfig = __assign(__assign({}, DEFAULT_CONFIG), config);
             this.interval = null;
             this.queue = [];
             this.maxAllowed = mergedConfig.maxAllowed;
@@ -110,7 +110,6 @@
         };
         return EventsQueue;
     }());
-    //# sourceMappingURL=events-queue.js.map
 
     /**
      *
@@ -121,7 +120,6 @@
     function getRenamedProperty(originalProperty) {
         return "_original_" + originalProperty + "_";
     }
-    //# sourceMappingURL=utils.js.map
 
     var buffer = EventsQueue.getInstance();
     // Reference link: https://gist.github.com/paulirish/5d52fb081b3570c81e3a
@@ -269,7 +267,6 @@
         objectPrototype[method] = originalImplementation;
         delete objectPrototype[renamedMethod];
     }
-    //# sourceMappingURL=element.js.map
 
     var initialized = false;
     var ReflowRejector = /** @class */ (function () {
@@ -294,7 +291,6 @@
         };
         return ReflowRejector;
     }());
-    //# sourceMappingURL=index.js.map
 
     ReflowRejector.initialize();
     var appContainer = document.getElementById('app');
@@ -307,7 +303,7 @@
         div.appendChild(anchor);
         div.appendChild(span);
         anchor.innerText = "Special Link " + i + " - ";
-        appContainer.appendChild(div);
+        appContainer === null || appContainer === void 0 ? void 0 : appContainer.appendChild(div);
         divList.push(div);
     }
     setInterval(function () {
